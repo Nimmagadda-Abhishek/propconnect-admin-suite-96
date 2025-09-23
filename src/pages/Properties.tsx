@@ -265,6 +265,20 @@ const Properties: React.FC = () => {
               >
                 Commercial
               </Button>
+              <Button
+                variant={typeFilter === 'NEW_DEVELOPMENT' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setTypeFilter('NEW_DEVELOPMENT')}
+              >
+                New Development
+              </Button>
+              <Button
+                variant={typeFilter === 'AGRICULTURE' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setTypeFilter('AGRICULTURE')}
+              >
+                Agriculture
+              </Button>
             </div>
           </div>
         </CardContent>

@@ -227,10 +227,7 @@ const Agents: React.FC = () => {
                 </SelectContent>
               </Select>
               
-              <Button variant="outline" onClick={handleExport}>
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
+
             </div>
           </div>
         </CardContent>

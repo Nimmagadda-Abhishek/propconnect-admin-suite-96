@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   Users, 
@@ -34,6 +34,7 @@ const Dashboard: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchStats = async () => {
     try {
@@ -140,14 +141,7 @@ const Dashboard: React.FC = () => {
       title: 'Add New Agent',
       description: 'Register a new property agent',
       icon: Plus,
-      action: () => {
-        // This would open the agent creation modal
-        toast({
-          title: 'Feature Coming Soon',
-          description: 'Agent creation modal will be implemented.',
-          variant: 'default',
-        });
-      },
+      action: () => navigate('/agents'),
       variant: 'default' as const,
     },
     {
@@ -164,19 +158,7 @@ const Dashboard: React.FC = () => {
       action: () => window.location.href = '/inquiries',
       variant: 'default' as const,
     },
-    {
-      title: 'Export Reports',
-      description: 'Download monthly summary',
-      icon: Download,
-      action: () => {
-        toast({
-          title: 'Export Started',
-          description: 'Your report is being generated...',
-          variant: 'default',
-        });
-      },
-      variant: 'outline' as const,
-    },
+    
   ];
 
   if (isLoading) {
