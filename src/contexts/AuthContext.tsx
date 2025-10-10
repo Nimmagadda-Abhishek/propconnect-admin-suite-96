@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { authAPI } from '@/services/api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -46,34 +47,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      
-      const response = await fetch('https://c707ef986dd3.ngrok-free.app/api/auth/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-        body: JSON.stringify({ username, password }),
-      });
 
-      const data = await response.json();
+      const response = await authAPI.login({ username, password });
+      const data = response.data;
 
-      if (response.ok && data.userType === 'ADMIN') {
+      if (data.userType === 'ADMIN') {
         const authData = {
           username: data.username,
           userType: data.userType,
+          token: data.token, // Assuming the API returns a token
         };
-        
+
         setIsAuthenticated(true);
         setAdminUser(authData);
         localStorage.setItem('propconnect_admin_auth', JSON.stringify(authData));
-        
+
         toast({
           title: "Login Successful",
           description: data.message || "Welcome to PropConnect Admin Panel",
           variant: "default",
         });
-        
+
         return true;
       } else {
         toast({
@@ -83,10 +77,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Connection Error",
-        description: "Unable to connect to server. Please try again.",
+        description: error.response?.data?.error || "Unable to connect to server. Please try again.",
         variant: "destructive",
       });
       return false;

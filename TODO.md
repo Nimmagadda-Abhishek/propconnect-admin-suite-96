@@ -1,0 +1,5 @@
+- [x] Update API_BASE_URL in src/services/api.ts to 'https://c707ef986dd3.ngrok-free.app'
+- [x] Add authAPI.login to src/services/api.ts
+- [x] Update src/contexts/AuthContext.tsx to use authAPI.login instead of direct fetch
+- [x] Update src/components/modals/PropertyEditModal.tsx to use propertiesAPI.update instead of direct fetch
+- [x] Fix token storage and retrieval consistency

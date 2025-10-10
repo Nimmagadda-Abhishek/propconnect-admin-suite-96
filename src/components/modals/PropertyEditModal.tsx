@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, X, Upload, Image, Star } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { propertiesAPI } from '@/services/api';
 
 interface PropertyImage {
   imageUrl: string;
@@ -217,20 +218,8 @@ export function PropertyEditModal({ isOpen, onClose, property, onPropertyUpdated
       // Add existing images info (if needed by backend)
       formDataToSend.append('existingImages', JSON.stringify(existingImages));
 
-      const response = await fetch(`https://c707ef986dd3.ngrok-free.app/api/properties/${property.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: formDataToSend
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const response = await propertiesAPI.update(property.id, formDataToSend);
+      const result = response.data;
       
       toast({
         title: 'Success',
