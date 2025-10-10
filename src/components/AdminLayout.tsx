@@ -33,12 +33,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </div>
             
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full text-xs flex items-center justify-center text-destructive-foreground">
-                  3
-                </span>
-              </Button>
+              
               
               <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
                 <User className="h-4 w-4 text-muted-foreground" />

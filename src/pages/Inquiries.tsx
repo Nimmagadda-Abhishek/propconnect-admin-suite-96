@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useNavigate } from 'react-router-dom';
 import { inquiriesAPI } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
@@ -41,18 +42,15 @@ interface Inquiry {
   message: string;
   inquiryType: 'VIEWING_REQUEST' | 'PRICE_NEGOTIATION' | 'MORE_INFO' | 'CALL_BACK';
   status: 'NEW' | 'CONTACTED' | 'IN_PROGRESS' | 'CLOSED';
-  property?: {
-    id: number;
-    propertyTitle: string;
-    price: number;
-  };
-  user: {
-    id: number;
-    fullName: string;
-  };
+  propertyId: number;
+  propertyTitle: string;
+  propertyCity: string;
+  userId: number;
+  userName: string;
   createdAt: string;
-  adminResponse: string | null;
-  respondedAt: string | null;
+  updatedAt: string;
+  adminResponse?: string | null;
+  respondedAt?: string | null;
 }
 
 const Inquiries: React.FC = () => {
@@ -62,6 +60,7 @@ const Inquiries: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchInquiries = async () => {
     try {
@@ -86,7 +85,7 @@ const Inquiries: React.FC = () => {
   const filteredInquiries = inquiries.filter(inquiry => {
     const matchesSearch = 
       inquiry.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (inquiry.property?.propertyTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (inquiry.propertyTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
       inquiry.message.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesStatus = statusFilter === 'ALL' || inquiry.status === statusFilter;
@@ -135,36 +134,10 @@ const Inquiries: React.FC = () => {
     );
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
+
 
   const handleViewDetails = (inquiry: Inquiry) => {
-    toast({
-      title: 'Feature Coming Soon',
-      description: `View details for inquiry #${inquiry.id} will be implemented.`,
-      variant: 'default',
-    });
-  };
-
-  const handleQuickStatusUpdate = (inquiry: Inquiry, newStatus: string) => {
-    toast({
-      title: 'Feature Coming Soon',
-      description: `Update status to ${newStatus} for inquiry #${inquiry.id} will be implemented.`,
-      variant: 'default',
-    });
-  };
-
-  const handleRespond = (inquiry: Inquiry) => {
-    toast({
-      title: 'Feature Coming Soon',
-      description: `Respond to inquiry #${inquiry.id} will be implemented.`,
-      variant: 'default',
-    });
+    navigate(`/inquiries/${inquiry.id}`);
   };
 
   if (isLoading) {
@@ -299,10 +272,10 @@ const Inquiries: React.FC = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Building2 className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">{inquiry.property?.propertyTitle || 'Unknown Property'}</span>
+                        <span className="font-medium">{inquiry.propertyTitle || 'Unknown Property'}</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {inquiry.property ? formatPrice(inquiry.property.price) : 'N/A'}
+                        {inquiry.propertyCity || 'N/A'}
                       </p>
                     </div>
                   </TableCell>
@@ -314,24 +287,14 @@ const Inquiries: React.FC = () => {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetails(inquiry)}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Details
-                      </Button>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => handleRespond(inquiry)}
-                      >
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        Respond
-                      </Button>
-                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewDetails(inquiry)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Details
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
