@@ -81,8 +81,8 @@ export const usersAPI = {
 // Inquiries API
 export const inquiriesAPI = {
   getAll: () => api.get('/api/inquiries'),
-  updateStatus: (id: number, status: string, response?: string) => 
-    api.put(`/api/admin/inquiries/${id}/status?status=${status}${response ? `&response=${encodeURIComponent(response)}` : ''}`),
+  updateStatus: (id: number, status: string, response?: string) =>
+    api.put(`/api/inquiries/${id}/status?status=${status}${response ? `&response=${encodeURIComponent(response)}` : ''}`),
 };
 
 export default api;

@@ -41,7 +41,7 @@ interface Inquiry {
   message: string;
   inquiryType: 'VIEWING_REQUEST' | 'PRICE_NEGOTIATION' | 'MORE_INFO' | 'CALL_BACK';
   status: 'NEW' | 'CONTACTED' | 'IN_PROGRESS' | 'CLOSED';
-  property: {
+  property?: {
     id: number;
     propertyTitle: string;
     price: number;
@@ -86,7 +86,7 @@ const Inquiries: React.FC = () => {
   const filteredInquiries = inquiries.filter(inquiry => {
     const matchesSearch = 
       inquiry.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inquiry.property.propertyTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (inquiry.property?.propertyTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
       inquiry.message.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesStatus = statusFilter === 'ALL' || inquiry.status === statusFilter;
@@ -299,10 +299,10 @@ const Inquiries: React.FC = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Building2 className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">{inquiry.property.propertyTitle}</span>
+                        <span className="font-medium">{inquiry.property?.propertyTitle || 'Unknown Property'}</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {formatPrice(inquiry.property.price)}
+                        {inquiry.property ? formatPrice(inquiry.property.price) : 'N/A'}
                       </p>
                     </div>
                   </TableCell>
