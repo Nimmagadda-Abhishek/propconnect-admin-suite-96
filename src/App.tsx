@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Agents from "./pages/Agents";
 import Properties from "./pages/Properties";
+import SoldProperties from "./pages/SoldProperties";
 import Users from "./pages/Users";
 import Inquiries from "./pages/Inquiries";
 import InquiryDetail from "./pages/InquiryDetail";
@@ -58,6 +59,13 @@ const App = () => (
               <ProtectedRoute>
                 <AdminLayout>
                   <Inquiries />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/sold-properties" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <SoldProperties />
                 </AdminLayout>
               </ProtectedRoute>
             } />

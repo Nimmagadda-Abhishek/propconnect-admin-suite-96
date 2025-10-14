@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
-import { inquiriesAPI } from '@/services/api';
+import { inquiriesAPI, agentsAPI, propertiesAPI } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 interface Inquiry {
@@ -45,6 +45,10 @@ interface Inquiry {
   propertyId: number;
   propertyTitle: string;
   propertyCity: string;
+  agentId?: number;
+  agentName?: string;
+  agentPhone?: string;
+  agentEmail?: string;
   userId: number;
   userName: string;
   createdAt: string;
@@ -66,7 +70,29 @@ const Inquiries: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await inquiriesAPI.getAll();
-      setInquiries(response.data);
+      const inquiriesData = response.data;
+
+      // Enrich inquiries with agent information from properties
+      const enrichedInquiries = await Promise.all(
+        inquiriesData.map(async (inquiry: Inquiry) => {
+          try {
+            const propertyResponse = await propertiesAPI.getById(inquiry.propertyId);
+            const property = propertyResponse.data;
+            return {
+              ...inquiry,
+              agentId: property.agentId,
+              agentName: property.agentName,
+              agentPhone: property.agentPhone,
+              agentEmail: property.agentEmail,
+            };
+          } catch (error) {
+            console.error(`Failed to fetch property details for inquiry ${inquiry.id}:`, error);
+            return inquiry; // Return inquiry without agent info if property fetch fails
+          }
+        })
+      );
+
+      setInquiries(enrichedInquiries);
     } catch (error) {
       toast({
         title: 'Error',
@@ -135,6 +161,25 @@ const Inquiries: React.FC = () => {
   };
 
 
+
+  const handleViewAgentDetails = async (agentId: number) => {
+    try {
+      const response = await agentsAPI.getById(agentId);
+      const agent = response.data;
+
+      toast({
+        title: `Agent: ${agent.fullName}`,
+        description: `Email: ${agent.email}\nPhone: ${agent.phoneNumber}\nStatus: ${agent.status}`,
+        variant: 'default',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch agent details.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleViewDetails = (inquiry: Inquiry) => {
     navigate(`/inquiries/${inquiry.id}`);
@@ -242,6 +287,7 @@ const Inquiries: React.FC = () => {
                 <TableHead>ID</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Property</TableHead>
+                <TableHead>Agent</TableHead>
                 <TableHead>Inquiry Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
@@ -278,6 +324,34 @@ const Inquiries: React.FC = () => {
                         {inquiry.propertyCity || 'N/A'}
                       </p>
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {inquiry.agentId ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium">{inquiry.agentName || 'Unknown Agent'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Mail className="w-3 h-3" />
+                          <span>{inquiry.agentEmail || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Phone className="w-3 h-3" />
+                          <span>{inquiry.agentPhone || 'N/A'}</span>
+                        </div>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="p-0 h-auto text-xs"
+                          onClick={() => inquiry.agentId && handleViewAgentDetails(inquiry.agentId)}
+                        >
+                          View Details
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">No Agent Assigned</span>
+                    )}
                   </TableCell>
                   <TableCell>{getTypeBadge(inquiry.inquiryType)}</TableCell>
                   <TableCell>{getStatusBadge(inquiry.status)}</TableCell>

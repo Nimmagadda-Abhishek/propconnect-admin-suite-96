@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-import { inquiriesAPI } from '@/services/api';
+import { inquiriesAPI, propertiesAPI } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 interface Inquiry {
@@ -29,6 +29,10 @@ interface Inquiry {
   propertyId: number;
   propertyTitle: string;
   propertyCity: string;
+  agentId?: number;
+  agentName?: string;
+  agentPhone?: string;
+  agentEmail?: string;
   userId: number;
   userName: string;
   createdAt: string;
@@ -50,7 +54,22 @@ const InquiryDetail: React.FC = () => {
       const response = await inquiriesAPI.getAll();
       const foundInquiry = response.data.find((inq: Inquiry) => inq.id === parseInt(id!));
       if (foundInquiry) {
-        setInquiry(foundInquiry);
+        // Enrich inquiry with agent information from property
+        try {
+          const propertyResponse = await propertiesAPI.getById(foundInquiry.propertyId);
+          const property = propertyResponse.data;
+          const enrichedInquiry = {
+            ...foundInquiry,
+            agentId: property.agentId,
+            agentName: property.agentName,
+            agentPhone: property.agentPhone,
+            agentEmail: property.agentEmail,
+          };
+          setInquiry(enrichedInquiry);
+        } catch (propertyError) {
+          console.error(`Failed to fetch property details for inquiry ${foundInquiry.id}:`, propertyError);
+          setInquiry(foundInquiry); // Set inquiry without agent info if property fetch fails
+        }
       } else {
         toast({
           title: 'Inquiry not found',
@@ -236,6 +255,38 @@ const InquiryDetail: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Agent Information */}
+        {inquiry.agentId && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Agent Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Agent Name</label>
+                <p className="text-lg font-semibold">{inquiry.agentName || 'Unknown Agent'}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Email</label>
+                <p className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  {inquiry.agentEmail || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  {inquiry.agentPhone || 'N/A'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Message */}
         <Card>

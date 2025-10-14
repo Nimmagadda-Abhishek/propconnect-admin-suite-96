@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://b39ad0aff255.ngrok-free.app';
+const API_BASE_URL = 'https://e05aa8b37ae1.ngrok-free.app';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -55,14 +55,15 @@ export const dashboardAPI = {
 // Agents API
 export const agentsAPI = {
   getAll: () => api.get('/api/admin/agents'),
-  create: (data: any) => api.post('/api/admin/agents', data),
-  update: (id: number, data: any) => api.put(`/api/admin/agents/${id}`, data),
+  getById: (id: number) => api.get(`/api/admin/agents/${id}`),
+  create: (data: Record<string, unknown>) => api.post('/api/admin/agents', data),
+  update: (id: number, data: Record<string, unknown>) => api.put(`/api/admin/agents/${id}`, data),
   delete: (id: number) => api.delete(`/api/admin/agents/${id}`),
 };
 
 // Properties API
 export const propertiesAPI = {
-  getAll: (params?: any) => api.get('/api/properties', { params }),
+  getAll: (params?: Record<string, unknown>) => api.get('/api/properties', { params }),
   getById: (id: number) => api.get(`/api/properties/${id}`),
   getByAgent: (agentId: number) => api.get(`/api/properties/agent/${agentId}`),
   update: (id: number, formData: FormData) => api.put(`/api/properties/${id}`, formData, {

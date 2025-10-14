@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  User, 
-  MessageSquare, 
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  User,
+  MessageSquare,
   LogOut,
-  Building 
+  Building,
+  CheckCircle
 } from 'lucide-react';
 import {
   Sidebar,
@@ -28,6 +29,7 @@ const menuItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Agents', url: '/agents', icon: Users },
   { title: 'Properties', url: '/properties', icon: Building2 },
+  { title: 'Sold Properties', url: '/sold-properties', icon: CheckCircle },
   { title: 'Users', url: '/users', icon: User },
   { title: 'Inquiries', url: '/inquiries', icon: MessageSquare },
 ];

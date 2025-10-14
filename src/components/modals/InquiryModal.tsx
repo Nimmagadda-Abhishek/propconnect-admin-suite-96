@@ -34,6 +34,10 @@ interface Inquiry {
     id: number;
     fullName: string;
   };
+  agentId?: number;
+  agentName?: string;
+  agentPhone?: string;
+  agentEmail?: string;
   createdAt: string;
   adminResponse?: string;
   respondedAt?: string;

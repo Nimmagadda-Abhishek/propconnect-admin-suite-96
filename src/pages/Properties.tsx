@@ -28,7 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { propertiesAPI } from '@/services/api';
+import { propertiesAPI, agentsAPI } from '@/services/api';
 import { PropertyModal } from '@/components/modals/PropertyModal';
 import { PropertyEditModal } from '@/components/modals/PropertyEditModal';
 import { DeleteConfirmDialog } from '@/components/modals/DeleteConfirmDialog';
@@ -41,10 +41,10 @@ interface PropertyListItem {
   propertyType: string;
   listingType: string;
   city: string;
-  agent: {
-    id: number;
-    fullName: string;
-  };
+  agentId: number;
+  agentName: string;
+  agentPhone: string;
+  agentEmail: string;
   status: string;
   createdAt: string;
   viewCount: number;
@@ -67,8 +67,8 @@ const Properties: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [propertyModal, setPropertyModal] = useState({ isOpen: false, property: null as any });
-  const [editModal, setEditModal] = useState({ isOpen: false, property: null as any, isLoading: false });
+  const [propertyModal, setPropertyModal] = useState({ isOpen: false, property: null as PropertyListItem | null });
+  const [editModal, setEditModal] = useState({ isOpen: false, property: null as PropertyListItem | null, isLoading: false });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, property: null as PropertyListItem | null });
 
   const fetchProperties = async (page = 0, size = 10) => {
@@ -80,12 +80,21 @@ const Properties: React.FC = () => {
         ...(typeFilter !== 'ALL' && { propertyType: typeFilter }),
         ...(searchQuery && { search: searchQuery }),
       };
-      
+
+      console.log('Properties API Call - Params:', params);
+      console.log('Properties API Call - Full URL:', propertiesAPI.getAll.name || 'propertiesAPI.getAll');
+
       const response = await propertiesAPI.getAll(params);
+
+      console.log('Properties API Response - Status:', response.status);
+      console.log('Properties API Response - Data:', response.data);
+      console.log('Properties API Response - Content length:', response.data.content?.length || 0);
+
       setProperties(response.data.content || []);
       setTotalPages(response.data.totalPages || 0);
       setCurrentPage(response.data.number || 0);
     } catch (error) {
+      console.error('Properties API Error:', error);
       toast({
         title: 'Error',
         description: 'Failed to fetch properties data.',
@@ -179,12 +188,25 @@ const Properties: React.FC = () => {
     });
   };
 
-  const handleViewAgentProperties = (agent: any) => {
-    toast({
-      title: 'Feature Coming Soon',
-      description: `View properties by ${agent.fullName} will be implemented.`,
-      variant: 'default',
-    });
+  const handleViewAgentProperties = async (agentId: number) => {
+    try {
+      // Fetch detailed agent information
+      const response = await agentsAPI.getById(agentId);
+      const detailedAgent = response.data;
+
+      // Show agent details in a modal or toast for now
+      toast({
+        title: `Agent: ${detailedAgent.fullName}`,
+        description: `Email: ${detailedAgent.email}\nPhone: ${detailedAgent.phoneNumber}\nStatus: ${detailedAgent.status}`,
+        variant: 'default',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch agent details.',
+        variant: 'destructive',
+      });
+    }
   };
 
   if (isLoading) {
@@ -302,7 +324,7 @@ const Properties: React.FC = () => {
                 <TableHead>Listing</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Agent</TableHead>
-                <TableHead>Views</TableHead>
+                
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -336,22 +358,18 @@ const Properties: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {property.agent ? (
+                    {property.agentId ? (
                       <button
-                        onClick={() => handleViewAgentProperties(property.agent)}
+                        onClick={() => handleViewAgentProperties(property.agentId)}
                         className="text-primary hover:underline"
                       >
-                        {property.agent.fullName}
+                        {property.agentName}
                       </button>
                     ) : (
                       <span className="text-muted-foreground">No Agent</span>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {property.viewCount} views
-                    </Badge>
-                  </TableCell>
+                  
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

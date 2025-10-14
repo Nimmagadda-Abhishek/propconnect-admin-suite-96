@@ -34,11 +34,10 @@ interface Property {
     imageUrl: string;
     isPrimary: boolean;
   }>;
-  agent?: {
-    id: number;
-    fullName: string;
-    phoneNumber: string;
-  } | null;
+  agentId?: number;
+  agentName?: string;
+  agentPhone?: string;
+  agentEmail?: string;
   latitude: number;
   longitude: number;
   viewCount: number;
@@ -162,7 +161,7 @@ export function PropertyModal({ isOpen, onClose, property, onViewAgentProperties
           {/* Right Column */}
           <div className="space-y-6">
             {/* Agent Information */}
-            {property.agent ? (
+            {property.agentId ? (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -172,21 +171,30 @@ export function PropertyModal({ isOpen, onClose, property, onViewAgentProperties
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="font-semibold">{property.agent.fullName}</p>
+                    <p className="font-semibold">{property.agentName}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
-                    <a 
-                      href={`tel:${property.agent.phoneNumber}`}
+                    <a
+                      href={`tel:${property.agentPhone}`}
                       className="text-primary hover:underline"
                     >
-                      {property.agent.phoneNumber}
+                      {property.agentPhone}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`mailto:${property.agentEmail}`}
+                      className="text-primary hover:underline"
+                    >
+                      {property.agentEmail}
                     </a>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onViewAgentProperties?.(property.agent!.id)}
+                    onClick={() => onViewAgentProperties?.(property.agentId!)}
                     className="w-full"
                   >
                     View Agent Properties

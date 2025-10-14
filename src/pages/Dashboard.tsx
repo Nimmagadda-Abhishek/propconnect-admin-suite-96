@@ -1,303 +1,284 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Building2, 
-  Users, 
-  User, 
-  MessageSquare, 
-  TrendingUp, 
-  Plus,
-  Eye,
-  Settings,
-  Download,
-  Activity
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { dashboardAPI } from '@/services/api';
-import { useToast } from '@/hooks/use-toast';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Building2, Users, User, MessageSquare, TrendingUp, CheckCircle, Key, Pause } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import Navigation from "@/components/Navigation";
+import StatCard from "@/components/dashboard/StatCard";
+import AgentPerformanceCard from "@/components/dashboard/AgentPerformanceCard";
+import PropertyDistributionChart from "@/components/dashboard/PropertyDistributionChart";
+import InquiriesPreviewTable from "@/components/dashboard/InquiriesPreviewTable";
 
 interface DashboardStats {
   totalProperties: number;
   totalAgents: number;
   totalUsers: number;
   totalInquiries: number;
+  activeProperties: number;
+  soldProperties: number;
+  rentedProperties: number;
+  inactiveProperties: number;
+  agentWithMostProperties: {
+    agentId: number;
+    agentName: string;
+    propertyCount: number;
+  };
+  agentWithLeastProperties: {
+    agentId: number;
+    agentName: string;
+    propertyCount: number;
+  };
+  agentWithMostSoldProperties: {
+    agentId: number;
+    agentName: string;
+    agentEmail: string;
+    agentPhone: string;
+    soldCount: number;
+  };
+  propertyStatusBreakdown: {
+    active: number;
+    sold: number;
+    rented: number;
+    inactive: number;
+    underReview: number;
+    total: number;
+  };
 }
 
-const Dashboard: React.FC = () => {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalProperties: 0,
-    totalAgents: 0,
-    totalUsers: 0,
-    totalInquiries: 0,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+interface PropertyInquiry {
+  id: number;
+  ownerName: string;
+  ownerEmail: string;
+  ownerPhone: string;
+  propertyType: string;
+  address: string;
+  area: number;
+  propertyAge: number;
+  createdAt: string;
+}
+
+const Dashboard = () => {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [inquiries, setInquiries] = useState<PropertyInquiry[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const fetchStats = async () => {
-    try {
-      const response = await dashboardAPI.getStats();
-      setStats(response.data);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch dashboard statistics.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchStats();
-    
-    // Auto-refresh stats every 30 seconds
-    const interval = setInterval(fetchStats, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  const statCards = [
-    {
-      title: 'Total Properties',
-      value: stats.totalProperties,
-      icon: Building2,
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
-      link: '/properties',
-      trend: '+12%',
-    },
-    {
-      title: 'Total Agents',
-      value: stats.totalAgents,
-      icon: Users,
-      color: 'text-secondary',
-      bgColor: 'bg-secondary/10',
-      link: '/agents',
-      trend: '+5%',
-    },
-    {
-      title: 'Total Users',
-      value: stats.totalUsers,
-      icon: User,
-      color: 'text-success',
-      bgColor: 'bg-success/10',
-      link: '/users',
-      trend: '+18%',
-    },
-    {
-      title: 'Total Inquiries',
-      value: stats.totalInquiries,
-      icon: MessageSquare,
-      color: 'text-warning',
-      bgColor: 'bg-warning/10',
-      link: '/inquiries',
-      trend: '+25%',
-    },
-  ];
+        // Fetch dashboard stats
+        const statsResponse = await fetch(
+          "https://e05aa8b37ae1.ngrok-free.app/api/admin/dashboard/stats",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
 
-  const recentActivities = [
-    {
-      id: 1,
-      action: 'New property listing',
-      details: '3BHK Apartment in Banjara Hills',
-      timestamp: '2 minutes ago',
-      type: 'property',
-    },
-    {
-      id: 2,
-      action: 'Agent registration',
-      details: 'John Smith joined as agent',
-      timestamp: '15 minutes ago',
-      type: 'agent',
-    },
-    {
-      id: 3,
-      action: 'Inquiry received',
-      details: 'User interested in Luxury Villa',
-      timestamp: '30 minutes ago',
-      type: 'inquiry',
-    },
-    {
-      id: 4,
-      action: 'Property updated',
-      details: 'Price updated for Commercial Space',
-      timestamp: '1 hour ago',
-      type: 'property',
-    },
-    {
-      id: 5,
-      action: 'User registration',
-      details: 'New user signed up',
-      timestamp: '2 hours ago',
-      type: 'user',
-    },
-  ];
+        if (!statsResponse.ok) {
+          throw new Error("Failed to fetch dashboard stats");
+        }
 
-  const quickActions = [
-    {
-      title: 'Add New Agent',
-      description: 'Register a new property agent',
-      icon: Plus,
-      action: () => navigate('/agents'),
-      variant: 'default' as const,
-    },
-    {
-      title: 'View All Properties',
-      description: 'Browse all property listings',
-      icon: Eye,
-      action: () => window.location.href = '/properties',
-      variant: 'secondary' as const,
-    },
-    {
-      title: 'Manage Inquiries',
-      description: 'Handle customer inquiries',
-      icon: Settings,
-      action: () => window.location.href = '/inquiries',
-      variant: 'default' as const,
-    },
-    
-  ];
+        const statsData = await statsResponse.json();
+        setStats(statsData);
 
-  if (isLoading) {
+        // Fetch property inquiries
+        const inquiriesResponse = await fetch(
+          "https://e05aa8b37ae1.ngrok-free.app/api/properties1",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+
+        if (!inquiriesResponse.ok) {
+          throw new Error("Failed to fetch property inquiries");
+        }
+
+        const inquiriesData = await inquiriesResponse.json();
+        // Sort by createdAt descending and take top 5
+        const sortedInquiries = inquiriesData
+          .sort((a: PropertyInquiry, b: PropertyInquiry) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .slice(0, 5);
+        setInquiries(sortedInquiries);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load dashboard data. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast]);
+
+
+
+  if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-muted rounded w-1/2"></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="animate-pulse space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="h-32 bg-muted rounded-lg"></div>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-64 bg-muted rounded-lg"></div>
+                ))}
+              </div>
+              <div className="h-96 bg-muted rounded-lg"></div>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="text-center py-12">
+              <p className="text-muted-foreground mb-4">No data available</p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
+            </div>
+          </div>
+        </main>
+      </>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Welcome to PropConnect Admin
-        </h1>
-        <p className="text-muted-foreground">
-          Monitor and manage your property management platform
-        </p>
-      </div>
-
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((card) => (
-          <Link key={card.title} to={card.link}>
-            <Card className="hover:shadow-medium transition-all duration-200 cursor-pointer group">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">
-                      {card.title}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-2xl font-bold text-foreground">
-                        {card.value.toLocaleString()}
-                      </h3>
-                      <Badge variant="secondary" className="text-xs">
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                        {card.trend}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className={`p-3 rounded-lg ${card.bgColor} group-hover:scale-110 transition-transform`}>
-                    <card.icon className={`w-6 h-6 ${card.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* Quick Actions & Recent Activities */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Quick Actions
-            </CardTitle>
-            <CardDescription>
-              Frequently used administrative tasks
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {quickActions.map((action) => (
-              <div key={action.title} className="flex items-center justify-between p-4 rounded-lg border hover:bg-card-hover transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-lg">
-                    <action.icon className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-foreground">{action.title}</h4>
-                    <p className="text-sm text-muted-foreground">{action.description}</p>
-                  </div>
-                </div>
-                <Button 
-                  variant={action.variant} 
-                  size="sm"
-                  onClick={action.action}
-                >
-                  Action
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Recent Activities */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5" />
-              Recent Activities
-            </CardTitle>
-            <CardDescription>
-              Latest activities across the platform
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-card-hover transition-colors">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {activity.details}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {activity.timestamp}
-                    </p>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className="text-xs"
-                  >
-                    {activity.type}
-                  </Badge>
-                </div>
-              ))}
+    <>
+      <Navigation />
+      <main className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          {/* Section 1: Statistics Cards Grid */}
+          <section>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <StatCard
+                title="Total Properties"
+                value={stats.totalProperties}
+                icon={Building2}
+                variant="default"
+                onClick={() => navigate("/properties")}
+              />
+              <StatCard
+                title="Total Agents"
+                value={stats.totalAgents}
+                icon={Users}
+                variant="default"
+                onClick={() => navigate("/agents")}
+              />
+              <StatCard
+                title="Total Users"
+                value={stats.totalUsers}
+                icon={User}
+                variant="default"
+                onClick={() => navigate("/users")}
+              />
+              <StatCard
+                title="Total Inquiries"
+                value={stats.totalInquiries}
+                icon={MessageSquare}
+                variant="default"
+                onClick={() => navigate("/inquiries")}
+              />
+              <StatCard
+                title="Active Properties"
+                value={stats.activeProperties}
+                icon={TrendingUp}
+                variant="success"
+                onClick={() => navigate("/properties?status=active")}
+              />
+              <StatCard
+                title="Sold Properties"
+                value={stats.soldProperties}
+                icon={CheckCircle}
+                variant="destructive"
+                onClick={() => navigate("/sold-properties")}
+              />
+              <StatCard
+                title="Rented Properties"
+                value={stats.rentedProperties}
+                icon={Key}
+                variant="info"
+                onClick={() => navigate("/properties?status=rented")}
+              />
+              <StatCard
+                title="Inactive Properties"
+                value={stats.inactiveProperties}
+                icon={Pause}
+                variant="muted"
+                onClick={() => navigate("/properties?status=inactive")}
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </section>
+
+          {/* Section 2: Agent Performance Cards */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-6">Top Performing Agents</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <AgentPerformanceCard
+                title="Top Agent (All Properties)"
+                agentName={stats.agentWithMostProperties.agentName}
+                count={stats.agentWithMostProperties.propertyCount}
+                countLabel="Properties"
+                variant="default"
+              />
+              <AgentPerformanceCard
+                title="🏆 Top Selling Agent"
+                agentName={stats.agentWithMostSoldProperties.agentName}
+                agentEmail={stats.agentWithMostSoldProperties.agentEmail}
+                agentPhone={stats.agentWithMostSoldProperties.agentPhone}
+                count={stats.agentWithMostSoldProperties.soldCount}
+                countLabel="Sold"
+                variant="gold"
+                showViewButton
+                agentId={stats.agentWithMostSoldProperties.agentId}
+              />
+              <AgentPerformanceCard
+                title="Newest Agent"
+                agentName={stats.agentWithLeastProperties.agentName}
+                count={stats.agentWithLeastProperties.propertyCount}
+                countLabel="Properties"
+                variant="muted"
+              />
+            </div>
+          </section>
+
+          {/* Section 3: Property Status Distribution Chart */}
+          <section>
+            <PropertyDistributionChart data={stats.propertyStatusBreakdown} />
+          </section>
+
+          {/* Section 4: Property Inquiries Preview */}
+          <section>
+            <InquiriesPreviewTable inquiries={inquiries} />
+          </section>
+        </div>
+      </main>
+    </>
   );
 };
 
