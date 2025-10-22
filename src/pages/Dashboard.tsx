@@ -89,7 +89,7 @@ const Dashboard = () => {
 
         // Fetch property inquiries
         const inquiriesResponse = await fetch(
-          "https://e05aa8b37ae1.ngrok-free.app/api/properties1",
+          "https://1aad7f0a9a01.ngrok-free.app/api/properties1",
           {
             headers: {
               "Content-Type": "application/json",
