@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Edit, Trash2, MoreHorizontal, Download } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Search, Filter, Edit, Trash2, MoreHorizontal, Download, Eye } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,16 +40,23 @@ interface Agent {
   phoneNumber: string;
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   createdAt: string;
+  location?: string;
+  address?: string;
+  proofs?: string[];
+  age?: number;
+  bloodGroup?: string;
+  dateOfBirth?: string;
 }
 
 const Agents: React.FC = () => {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  
+
   // Modal states
   const [agentModal, setAgentModal] = useState({ isOpen: false, agent: null as Agent | null });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, agent: null as Agent | null });
@@ -167,7 +175,7 @@ const Agents: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Agents Management
@@ -176,10 +184,12 @@ const Agents: React.FC = () => {
             Manage property agents and their access
           </p>
         </div>
-        <Button onClick={handleAddAgent} className="gradient-primary">
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Agent
-        </Button>
+        <div className="flex justify-end">
+          <Button onClick={handleAddAgent} className="gradient-primary w-full sm:w-auto">
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Agent
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -250,6 +260,9 @@ const Agents: React.FC = () => {
                 <TableHead>Full Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Blood Group</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -263,6 +276,9 @@ const Agents: React.FC = () => {
                   <TableCell>{agent.fullName}</TableCell>
                   <TableCell>{agent.email}</TableCell>
                   <TableCell>{agent.phoneNumber}</TableCell>
+                  <TableCell>{agent.location || 'N/A'}</TableCell>
+                  <TableCell>{agent.age || 'N/A'}</TableCell>
+                  <TableCell>{agent.bloodGroup || 'N/A'}</TableCell>
                   <TableCell>{getStatusBadge(agent.status)}</TableCell>
                   <TableCell>
                     {new Date(agent.createdAt).toLocaleDateString()}
@@ -275,11 +291,15 @@ const Agents: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => navigate(`/agents/${agent.id}`)}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEditAgent(agent)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleDeleteAgent(agent)}
                           className="text-destructive"
                         >

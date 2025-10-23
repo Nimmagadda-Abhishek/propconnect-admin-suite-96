@@ -14,6 +14,7 @@ import SoldProperties from "./pages/SoldProperties";
 import Users from "./pages/Users";
 import Inquiries from "./pages/Inquiries";
 import InquiryDetail from "./pages/InquiryDetail";
+import AgentDetail from "./pages/AgentDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,13 @@ const App = () => (
               <ProtectedRoute>
                 <AdminLayout>
                   <InquiryDetail />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/agents/:id" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AgentDetail />
                 </AdminLayout>
               </ProtectedRoute>
             } />

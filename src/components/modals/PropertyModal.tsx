@@ -108,10 +108,21 @@ export function PropertyModal({ isOpen, onClose, property, onViewAgentProperties
                     <Badge variant="secondary">{property.listingType}</Badge>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>{property.fullAddress}, {property.city}</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Property ID</label>
+                    <p className="font-medium">#{property.id}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Listed Date</label>
+                    <p className="font-medium">{new Date(property.createdAt).toLocaleDateString()}</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

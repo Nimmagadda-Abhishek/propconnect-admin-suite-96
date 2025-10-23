@@ -9,6 +9,7 @@ interface PropertyInquiry {
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
+  description: string;
   propertyType: string;
   address: string;
   area: number;
@@ -53,7 +54,12 @@ const InquiriesPreviewTable = ({ inquiries }: InquiriesPreviewTableProps) => {
             {inquiries.map((inquiry) => (
               <tr key={inquiry.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                 <td className="py-4 px-4">
-                  <p className="font-medium text-foreground">{inquiry.ownerName}</p>
+                  <div className="flex flex-col">
+                    <p className="font-medium text-foreground">{inquiry.ownerName}</p>
+                    {inquiry.description && (
+                      <p className="text-xs text-muted-foreground mt-1">{inquiry.description}</p>
+                    )}
+                  </div>
                 </td>
                 <td className="py-4 px-4">
                   <div className="flex flex-col gap-1">
@@ -74,9 +80,16 @@ const InquiriesPreviewTable = ({ inquiries }: InquiriesPreviewTableProps) => {
                   </div>
                 </td>
                 <td className="py-4 px-4">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    {inquiry.propertyType}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                      {inquiry.propertyType.split(' - ')[0]}
+                    </span>
+                    {inquiry.propertyType.includes(' - ') && (
+                      <span className="text-xs text-muted-foreground mt-1">
+                        {inquiry.propertyType.split(' - ')[1]}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="py-4 px-4">
                   <p className="text-sm text-foreground">{inquiry.address}</p>

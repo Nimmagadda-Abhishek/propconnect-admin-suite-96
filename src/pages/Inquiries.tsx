@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  MessageSquare, 
-  Eye, 
-  Clock, 
-  CheckCircle, 
+import {
+  Search,
+  Filter,
+  MessageSquare,
+  Eye,
+  Clock,
+  CheckCircle,
   User,
   Building2,
   Phone,
-  Mail
+  Mail,
+  ArrowLeft
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -206,13 +207,24 @@ const Inquiries: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Inquiries Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage customer inquiries and responses
-          </p>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Inquiries Management
+            </h1>
+            <p className="text-muted-foreground">
+              Manage customer inquiries and responses
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MessageSquare className="w-4 h-4" />

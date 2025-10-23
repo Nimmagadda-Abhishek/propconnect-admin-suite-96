@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, User, Mail, Phone, Calendar, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ const Users: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -72,11 +74,7 @@ const Users: React.FC = () => {
   };
 
   const handleViewInquiries = (user: UserData) => {
-    toast({
-      title: 'Feature Coming Soon',
-      description: `View inquiries from ${user.fullName} will be implemented.`,
-      variant: 'default',
-    });
+    navigate('/inquiries');
   };
 
   if (isLoading) {
@@ -189,24 +187,14 @@ const Users: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewProfile(user)}
-                      >
-                        <User className="w-4 h-4 mr-2" />
-                        Profile
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewInquiries(user)}
-                      >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Inquiries
-                      </Button>
-                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewInquiries(user)}
+                    >
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Inquiries
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

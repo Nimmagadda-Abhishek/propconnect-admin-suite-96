@@ -50,6 +50,7 @@ interface PropertyInquiry {
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
+  description: string;
   propertyType: string;
   address: string;
   area: number;
@@ -71,7 +72,7 @@ const Dashboard = () => {
 
         // Fetch dashboard stats
         const statsResponse = await fetch(
-          "https://e05aa8b37ae1.ngrok-free.app/api/admin/dashboard/stats",
+          "https://3051511dd87c.ngrok-free.app/api/admin/dashboard/stats",
           {
             headers: {
               "Content-Type": "application/json",
@@ -89,7 +90,7 @@ const Dashboard = () => {
 
         // Fetch property inquiries
         const inquiriesResponse = await fetch(
-          "https://e05aa8b37ae1.ngrok-free.app/api/properties1",
+          "https://3051511dd87c.ngrok-free.app/api/properties1",
           {
             headers: {
               "Content-Type": "application/json",

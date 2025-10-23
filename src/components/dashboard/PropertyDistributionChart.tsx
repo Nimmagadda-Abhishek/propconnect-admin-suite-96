@@ -27,7 +27,7 @@ const PropertyDistributionChart = ({ data }: PropertyDistributionChartProps) => 
     { name: "Rented", value: data.rented, color: COLORS.rented },
     { name: "Inactive", value: data.inactive, color: COLORS.inactive },
     { name: "Under Review", value: data.underReview, color: COLORS.underReview },
-  ].filter(item => item.value > 0);
+  ];
 
   const renderLabel = (entry: any) => {
     const percent = ((entry.value / data.total) * 100).toFixed(0);

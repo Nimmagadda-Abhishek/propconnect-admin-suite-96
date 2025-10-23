@@ -229,7 +229,7 @@ const Properties: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Properties Management
@@ -238,9 +238,11 @@ const Properties: React.FC = () => {
             Manage all property listings and their details
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Building2 className="w-4 h-4" />
-          <span>{properties.length} properties found</span>
+        <div className="flex justify-end">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Building2 className="w-4 h-4" />
+            <span>{properties.length} properties found</span>
+          </div>
         </div>
       </div>
 

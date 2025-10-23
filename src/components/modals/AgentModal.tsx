@@ -16,6 +16,12 @@ interface Agent {
   phoneNumber: string;
   status?: string;
   createdAt?: string;
+  location?: string;
+  address?: string;
+  proofs?: string[];
+  age?: number;
+  bloodGroup?: string;
+  dateOfBirth?: string;
 }
 
 interface AgentModalProps {
@@ -32,6 +38,11 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
     fullName: '',
     email: '',
     phoneNumber: '',
+    location: '',
+    address: '',
+    age: undefined,
+    bloodGroup: '',
+    dateOfBirth: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,6 +56,11 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
         fullName: agent.fullName,
         email: agent.email,
         phoneNumber: agent.phoneNumber,
+        location: agent.location || '',
+        address: agent.address || '',
+        age: agent.age,
+        bloodGroup: agent.bloodGroup || '',
+        dateOfBirth: agent.dateOfBirth || '',
       });
     } else {
       setFormData({
@@ -53,6 +69,11 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
         fullName: '',
         email: '',
         phoneNumber: '',
+        location: '',
+        address: '',
+        age: undefined,
+        bloodGroup: '',
+        dateOfBirth: '',
       });
     }
     setErrors({});
@@ -80,13 +101,13 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
     setLoading(true);
     try {
       if (agent?.id) {
-        await agentsAPI.update(agent.id, formData);
+        await agentsAPI.update(agent.id, formData as Record<string, unknown>);
         toast({
           title: "Success",
           description: "Agent updated successfully",
         });
       } else {
-        await agentsAPI.create(formData);
+        await agentsAPI.create(formData as Record<string, unknown>);
         toast({
           title: "Success", 
           description: "Agent created successfully",
@@ -94,10 +115,11 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
       }
       onSuccess();
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { error?: string } } };
       toast({
         title: "Error",
-        description: error.response?.data?.error || "Operation failed",
+        description: err.response?.data?.error || "Operation failed",
         variant: "destructive",
       });
     } finally {
@@ -204,6 +226,53 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
             {errors.phoneNumber && (
               <p className="text-sm text-destructive">{errors.phoneNumber}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) => handleInputChange('location', e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="age">Age</Label>
+            <Input
+              id="age"
+              type="number"
+              value={formData.age || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value ? Number(e.target.value) : undefined }))}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="bloodGroup">Blood Group</Label>
+            <Input
+              id="bloodGroup"
+              value={formData.bloodGroup}
+              onChange={(e) => handleInputChange('bloodGroup', e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dateOfBirth">Date of Birth</Label>
+            <Input
+              id="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+            />
           </div>
 
           <div className="flex gap-2 justify-end pt-4">

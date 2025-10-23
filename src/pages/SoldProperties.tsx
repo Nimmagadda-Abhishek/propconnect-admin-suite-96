@@ -85,7 +85,7 @@ const SoldProperties = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://e05aa8b37ae1.ngrok-free.app/api/admin/dashboard/sold-properties",
+        "https://3051511dd87c.ngrok-free.app/api/admin/dashboard/sold-properties",
         {
           headers: {
             "Content-Type": "application/json",
