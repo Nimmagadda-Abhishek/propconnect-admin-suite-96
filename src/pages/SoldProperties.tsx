@@ -86,7 +86,7 @@ const SoldProperties = () => {
     try {
       const response = await fetch(
 
-        "https://f8456ad84ecf.ngrok-free.app/api/admin/dashboard/sold-properties",
+        "https://5d68354c8aee.ngrok-free.app/api/admin/dashboard/sold-properties",
 
         {
           headers: {
