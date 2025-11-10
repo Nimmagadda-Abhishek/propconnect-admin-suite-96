@@ -73,7 +73,7 @@ const Dashboard = () => {
         // Fetch dashboard stats
         const statsResponse = await fetch(
 
-          "https://79e860a3c23d.ngrok-free.app/api/admin/dashboard/stats",
+          "https://3b0024836e23.ngrok-free.appapi/admin/dashboard/stats",
           {
             headers: {
               "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const Dashboard = () => {
         // Fetch property inquiries
         const inquiriesResponse = await fetch(
 
-          "https://79e860a3c23d.ngrok-free.app/api/properties1",
+          "https://3b0024836e23.ngrok-free.app/api/properties1",
 
           {
             headers: {
