@@ -73,7 +73,7 @@ const Dashboard = () => {
         // Fetch dashboard stats
         const statsResponse = await fetch(
 
-          "https://3b0024836e23.ngrok-free.appapi/admin/dashboard/stats",
+          "https://3b0024836e23.ngrok-free.app/admin/dashboard/stats",
           {
             headers: {
               "Content-Type": "application/json",
