@@ -14,6 +14,7 @@ interface Agent {
   fullName: string;
   email: string;
   phoneNumber: string;
+  experience: number;
   status?: string;
   createdAt?: string;
   location?: string;
@@ -38,12 +39,15 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
     fullName: '',
     email: '',
     phoneNumber: '',
+    experience: 0,
     location: '',
     address: '',
     age: undefined,
     bloodGroup: '',
     dateOfBirth: '',
   });
+  const [panFile, setPanFile] = useState<File | null>(null);
+  const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,6 +60,7 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
         fullName: agent.fullName,
         email: agent.email,
         phoneNumber: agent.phoneNumber,
+        experience: agent.experience || 0,
         location: agent.location || '',
         address: agent.address || '',
         age: agent.age,
@@ -69,6 +74,7 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
         fullName: '',
         email: '',
         phoneNumber: '',
+        experience: 0,
         location: '',
         address: '',
         age: undefined,
@@ -81,35 +87,44 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.username.trim()) newErrors.username = 'Username is required';
     if (!agent && !formData.password) newErrors.password = 'Password is required';
     if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
     if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required';
-    
+    if (formData.experience < 0) newErrors.experience = 'Experience cannot be negative';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
     try {
       if (agent?.id) {
-        await agentsAPI.update(agent.id, formData as Record<string, unknown>);
+        await agentsAPI.update(agent.id, formData as any);
         toast({
           title: "Success",
           description: "Agent updated successfully",
         });
       } else {
-        await agentsAPI.create(formData as Record<string, unknown>);
+        const formDataToSend = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formDataToSend.append(key, value.toString());
+          }
+        });
+        if (panFile) formDataToSend.append('panFile', panFile);
+        if (aadharFile) formDataToSend.append('aadharFile', aadharFile);
+        await agentsAPI.create(formDataToSend);
         toast({
-          title: "Success", 
+          title: "Success",
           description: "Agent created successfully",
         });
       }
@@ -136,7 +151,7 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto w-[95vw] sm:w-auto">
         <DialogHeader>
           <DialogTitle>
             {agent ? 'Edit Agent' : 'Add New Agent'}
@@ -229,6 +244,20 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="experience">Experience (years)</Label>
+            <Input
+              id="experience"
+              type="number"
+              value={formData.experience}
+              onChange={(e) => setFormData(prev => ({ ...prev, experience: Number(e.target.value) || 0 }))}
+              className={errors.experience ? 'border-destructive' : ''}
+            />
+            {errors.experience && (
+              <p className="text-sm text-destructive">{errors.experience}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
             <Input
               id="location"
@@ -274,6 +303,30 @@ export function AgentModal({ isOpen, onClose, agent, onSuccess }: AgentModalProp
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
             />
           </div>
+
+          {!agent && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="panFile">PAN Card</Label>
+                <Input
+                  id="panFile"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => setPanFile(e.target.files?.[0] || null)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="aadharFile">Aadhar Card</Label>
+                <Input
+                  id="aadharFile"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => setAadharFile(e.target.files?.[0] || null)}
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex gap-2 justify-end pt-4">
             <Button

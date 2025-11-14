@@ -201,7 +201,7 @@ const Agents: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -213,9 +213,9 @@ const Agents: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -225,9 +225,9 @@ const Agents: React.FC = () => {
                   <SelectItem value="SUSPENDED">Suspended</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-full sm:w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -236,8 +236,6 @@ const Agents: React.FC = () => {
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              
-
             </div>
           </div>
         </CardContent>

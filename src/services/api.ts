@@ -2,7 +2,11 @@ import axios from 'axios';
 
 
 
+<<<<<<< Updated upstream
 const API_BASE_URL = 'https://3b0024836e23.ngrok-free.app';
+=======
+const API_BASE_URL = 'https://23adff71a200.ngrok-free.app';
+>>>>>>> Stashed changes
 
 
 // Create axios instance with default config
@@ -58,8 +62,21 @@ export const dashboardAPI = {
 // Agents API
 export const agentsAPI = {
   getAll: () => api.get('/api/admin/agents'),
-  getById: (id: number) => api.get(`/api/admin/agents/${id}`),
-  create: (data: Record<string, unknown>) => api.post('/api/admin/agents', data),
+  getById: (id: number) => {
+    console.log('Fetching agent details for ID:', id);
+    return api.get(`/api/admin/agents/${id}`).then(response => {
+      console.log('Response status:', response.status);
+      console.log('Response data type:', typeof response.data);
+      console.log('Response data keys:', Object.keys(response.data));
+      console.log('Received agent data:', response.data);
+      return response;
+    });
+  },
+  create: (formData: FormData) => api.post('/api/admin/agents', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
   update: (id: number, data: Record<string, unknown>) => api.put(`/api/admin/agents/${id}`, data),
   delete: (id: number) => api.delete(`/api/admin/agents/${id}`),
 };

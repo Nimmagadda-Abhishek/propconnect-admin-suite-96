@@ -73,7 +73,11 @@ const Dashboard = () => {
         // Fetch dashboard stats
         const statsResponse = await fetch(
 
+<<<<<<< Updated upstream
           "https://3b0024836e23.ngrok-free.app/admin/dashboard/stats",
+=======
+          "https://23adff71a200.ngrok-free.app/api/admin/dashboard/stats",
+>>>>>>> Stashed changes
           {
             headers: {
               "Content-Type": "application/json",
@@ -92,7 +96,11 @@ const Dashboard = () => {
         // Fetch property inquiries
         const inquiriesResponse = await fetch(
 
+<<<<<<< Updated upstream
           "https://3b0024836e23.ngrok-free.app/api/properties1",
+=======
+          "https://23adff71a200.ngrok-free.app/api/properties1",
+>>>>>>> Stashed changes
 
           {
             headers: {
@@ -176,10 +184,10 @@ const Dashboard = () => {
     <>
       <Navigation />
       <main className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
           {/* Section 1: Statistics Cards Grid */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <StatCard
                 title="Total Properties"
                 value={stats.totalProperties}
@@ -241,8 +249,8 @@ const Dashboard = () => {
 
           {/* Section 2: Agent Performance Cards */}
           <section>
-            <h2 className="text-2xl font-bold text-foreground mb-6">Top Performing Agents</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Top Performing Agents</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <AgentPerformanceCard
                 title="Top Agent (All Properties)"
                 agentName={stats.agentWithMostProperties.agentName}

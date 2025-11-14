@@ -28,10 +28,12 @@ interface Agent {
   createdAt: string;
   location?: string;
   address?: string;
-  proofs?: string[];
+  panUlr?: string;
+  aadharUrl?: string;
   age?: number;
   bloodGroup?: string;
   dateOfBirth?: string;
+  experience?: number;
 }
 
 const AgentDetail: React.FC = () => {
@@ -44,18 +46,8 @@ const AgentDetail: React.FC = () => {
   const fetchAgent = async () => {
     try {
       setIsLoading(true);
-      const response = await agentsAPI.getAll();
-      const foundAgent = response.data.find((ag: Agent) => ag.id === parseInt(id!));
-      if (foundAgent) {
-        setAgent(foundAgent);
-      } else {
-        toast({
-          title: 'Agent not found',
-          description: 'The requested agent could not be found.',
-          variant: 'destructive',
-        });
-        navigate('/agents');
-      }
+      const response = await agentsAPI.getById(parseInt(id!));
+      setAgent(response.data);
     } catch (error) {
       toast({
         title: 'Error',
@@ -174,6 +166,10 @@ const AgentDetail: React.FC = () => {
                 {new Date(agent.createdAt).toLocaleString()}
               </p>
             </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Experience</label>
+              <p className="text-lg">{agent.experience ? `${agent.experience} years` : 'N/A'}</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -218,6 +214,39 @@ const AgentDetail: React.FC = () => {
                 {agent.dateOfBirth ? new Date(agent.dateOfBirth).toLocaleDateString() : 'N/A'}
               </p>
             </div>
+            {(agent.panUlr || agent.aadharUrl) && (
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Documents</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                  {agent.panUlr && (
+                    <div className="border rounded-lg p-2">
+                      <p className="text-sm font-medium mb-2">PAN Card</p>
+                      <img
+                        src={agent.panUlr}
+                        alt="PAN Card"
+                        className="w-full h-32 object-cover rounded"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.svg';
+                        }}
+                      />
+                    </div>
+                  )}
+                  {agent.aadharUrl && (
+                    <div className="border rounded-lg p-2">
+                      <p className="text-sm font-medium mb-2">Aadhaar Card</p>
+                      <img
+                        src={agent.aadharUrl}
+                        alt="Aadhaar Card"
+                        className="w-full h-32 object-cover rounded"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.svg';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

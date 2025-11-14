@@ -86,7 +86,11 @@ const SoldProperties = () => {
     try {
       const response = await fetch(
 
+<<<<<<< Updated upstream
         "https://3b0024836e23.ngrok-free.app/api/admin/dashboard/sold-properties",
+=======
+        "https://23adff71a200.ngrok-free.app/api/admin/dashboard/sold-properties",
+>>>>>>> Stashed changes
 
         {
           headers: {

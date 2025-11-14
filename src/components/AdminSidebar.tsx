@@ -56,14 +56,14 @@ export function AdminSidebar() {
   return (
     <Sidebar className={collapsed ? "w-16" : "w-64"}>
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-3 px-4 py-4">
-          <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-4">
+          <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center flex-shrink-0">
             <Building className="w-5 h-5 text-sidebar-primary-foreground" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
-              <h2 className="text-lg font-bold text-sidebar-foreground">PropConnect</h2>
-              <p className="text-xs text-sidebar-foreground/70">Admin Panel</p>
+            <div className="flex flex-col min-w-0">
+              <h2 className="text-lg font-bold text-sidebar-foreground truncate">PropConnect</h2>
+              <p className="text-xs text-sidebar-foreground/70 truncate">Admin Panel</p>
             </div>
           )}
         </div>

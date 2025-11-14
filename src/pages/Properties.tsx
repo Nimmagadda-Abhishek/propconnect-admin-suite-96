@@ -267,11 +267,12 @@ const Properties: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant={typeFilter === 'ALL' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTypeFilter('ALL')}
+                className="w-full sm:w-auto"
               >
                 All Types
               </Button>
@@ -279,6 +280,7 @@ const Properties: React.FC = () => {
                 variant={typeFilter === 'RESIDENTIAL' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTypeFilter('RESIDENTIAL')}
+                className="w-full sm:w-auto"
               >
                 Residential
               </Button>
@@ -286,6 +288,7 @@ const Properties: React.FC = () => {
                 variant={typeFilter === 'COMMERCIAL' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTypeFilter('COMMERCIAL')}
+                className="w-full sm:w-auto"
               >
                 Commercial
               </Button>
@@ -293,6 +296,7 @@ const Properties: React.FC = () => {
                 variant={typeFilter === 'NEW_DEVELOPMENT' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTypeFilter('NEW_DEVELOPMENT')}
+                className="w-full sm:w-auto"
               >
                 New Development
               </Button>
@@ -300,6 +304,7 @@ const Properties: React.FC = () => {
                 variant={typeFilter === 'AGRICULTURE' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTypeFilter('AGRICULTURE')}
+                className="w-full sm:w-auto"
               >
                 Agriculture
               </Button>
