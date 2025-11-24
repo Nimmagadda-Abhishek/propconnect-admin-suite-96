@@ -74,7 +74,11 @@ const Dashboard = () => {
         const statsResponse = await fetch(
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           "https://3b0024836e23.ngrok-free.app/admin/dashboard/stats",
+=======
+          "https://23adff71a200.ngrok-free.app/api/admin/dashboard/stats",
+>>>>>>> Stashed changes
 =======
           "https://23adff71a200.ngrok-free.app/api/admin/dashboard/stats",
 >>>>>>> Stashed changes
@@ -97,7 +101,11 @@ const Dashboard = () => {
         const inquiriesResponse = await fetch(
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           "https://3b0024836e23.ngrok-free.app/api/properties1",
+=======
+          "https://23adff71a200.ngrok-free.app/api/properties1",
+>>>>>>> Stashed changes
 =======
           "https://23adff71a200.ngrok-free.app/api/properties1",
 >>>>>>> Stashed changes

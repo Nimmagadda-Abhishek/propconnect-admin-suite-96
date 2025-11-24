@@ -3,7 +3,11 @@ import axios from 'axios';
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const API_BASE_URL = 'https://3b0024836e23.ngrok-free.app';
+=======
+const API_BASE_URL = 'https://23adff71a200.ngrok-free.app';
+>>>>>>> Stashed changes
 =======
 const API_BASE_URL = 'https://23adff71a200.ngrok-free.app';
 >>>>>>> Stashed changes
